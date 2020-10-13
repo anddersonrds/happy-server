@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
+import { ValidationError } from 'yup';
 import cors from 'cors';
 import 'express-async-errors';
 
@@ -7,6 +8,10 @@ import uploadConfig from '@config/upload';
 import routes from './routes';
 
 import '@shared/infra/typeorm';
+
+interface ValidationErrorProps {
+  [key: string]: string[];
+}
 
 const app = express();
 
@@ -17,6 +22,19 @@ app.use(routes);
 
 routes.use(
   (err: Error, request: Request, response: Response, _: NextFunction) => {
+    if (err instanceof ValidationError) {
+      const errors: ValidationErrorProps = {};
+
+      err.inner.forEach(error => {
+        errors[error.path] = error.errors;
+      });
+
+      return response.status(400).json({
+        message: 'Validation fails',
+        errors,
+      });
+    }
+
     if (err instanceof AppError) {
       return response.status(err.statusCode).json({
         status: 'error',
