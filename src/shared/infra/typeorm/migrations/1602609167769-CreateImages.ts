@@ -1,11 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export default class CreateOrphanages1602597052298
-  implements MigrationInterface {
+export default class CreateImages1602609167769 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'orphanages',
+        name: 'images',
         columns: [
           {
             name: 'id',
@@ -15,37 +14,12 @@ export default class CreateOrphanages1602597052298
             default: 'uuid_generate_v4()',
           },
           {
-            name: 'name',
+            name: 'path',
             type: 'varchar',
           },
           {
-            name: 'latitude',
-            type: 'decimal',
-            scale: 2,
-            precision: 10,
-          },
-          {
-            name: 'longitude',
-            type: 'decimal',
-            scale: 2,
-            precision: 10,
-          },
-          {
-            name: 'about',
-            type: 'text',
-          },
-          {
-            name: 'instructions',
-            type: 'text',
-          },
-          {
-            name: 'opening_hours',
-            type: 'varchar',
-          },
-          {
-            name: 'open_on_weekends',
-            type: 'boolean',
-            default: false,
+            name: 'orphanage_id',
+            type: 'uuid',
           },
           {
             name: 'created_at',
@@ -58,11 +32,21 @@ export default class CreateOrphanages1602597052298
             default: 'now()',
           },
         ],
+        foreignKeys: [
+          {
+            name: 'ImageOrphanage',
+            columnNames: ['orphanage_id'],
+            referencedTableName: 'orphanages',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
+          },
+        ],
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('orphanages');
+    await queryRunner.dropTable('images');
   }
 }

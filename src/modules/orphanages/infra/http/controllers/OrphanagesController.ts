@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 
-import Orphanage from '@modules/orphanages/infra/typeorm/entities/Orphanages';
+import Orphanage from '@modules/orphanages/infra/typeorm/entities/Orphanage';
 
 export default class AppointmentsController {
   public async index(request: Request, response: Response): Promise<Response> {
@@ -34,6 +34,12 @@ export default class AppointmentsController {
 
     const orphanagesRepository = getRepository(Orphanage);
 
+    const requestImages = request.files as Express.Multer.File[];
+
+    const images = requestImages.map(image => {
+      return { path: image.filename };
+    });
+
     const orphanage = orphanagesRepository.create({
       name,
       latitude,
@@ -42,6 +48,7 @@ export default class AppointmentsController {
       instructions,
       opening_hours,
       open_on_weekends,
+      images,
     });
 
     await orphanagesRepository.save(orphanage);
