@@ -5,6 +5,7 @@ import OrphanagesController from '@modules/orphanages/infra/http/controllers/Orp
 const orphanagesRouter = Router();
 const orphanagesController = new OrphanagesController();
 
+orphanagesRouter.get('/', orphanagesController.index);
 orphanagesRouter.post('/', orphanagesController.create);
 
 export default orphanagesRouter;
